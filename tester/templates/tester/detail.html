@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+    <title>Test Beans</title>
+
+    {% load static %}
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" >
+
+    <!-- Custom styles for this template
+    <link href="jumbotron-narrow.css" rel="stylesheet"> -->
+    <link href="{% static 'bootstrap/css/jumbotron-narrow.css' %}" rel="stylesheet" type="text/css" >
+
+</head>
+
+<body>
+
+    <div class="container">
+      <div class="header clearfix">
+        <nav>
+          <ul class="nav nav-pills pull-right">
+            <li role="presentation"><a href="{% url 'tester:index' %}">Home</a></li>
+            <li role="presentation"><a href="{% url 'tester:index' %}">About</a></li>
+          </ul>
+        </nav>
+        <h2 class="text-muted">TEST BEANS</h2>
+      </div>
+
+      <div class="row marketing">
+        <div class="col-lg-6">
+
+            <!-- Specific content -->
+            <h2>{{feature}}</h2> <br>
+
+            <ul>
+            {% for scenario in feature.scenario_set.all %}
+                <li>{{ scenario.name }}</li>
+            {% endfor %}
+            </ul>
+            <br>
+
+            <form action="{% url 'tester:detailresult' feature.id %}" method="post">
+                {% csrf_token %}
+                <input type="submit" value="Run" class="btn btn-lg btn-success" />
+            </form>
+
+            {% for line in file_content %}
+                <br>{{ line }}</br>
+            {% endfor %}
+
+        </div> <!--/col-lg-6  -->
+
+      </div>
+
+      <footer class="footer">
+        <p></p>
+      </footer>
+
+    </div> <!-- /container -->
+
+</body>
+</html>
