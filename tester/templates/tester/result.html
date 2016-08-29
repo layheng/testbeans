@@ -44,6 +44,10 @@
                 {% endfor %}
             {% endif %}
             <br>
+            <div class="progress">
+                <div class="progress-bar progress-bar-success" style="{{pass_progress}}">{{ pass_percentage}}</div>
+                <div class="progress-bar progress-bar-danger" style="{{fail_progress}}">{{ fail_percentage }}</div>
+            </div>
             <hr>
 
             <h2>Detail Test Results</h2>
