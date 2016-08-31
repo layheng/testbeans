@@ -7,7 +7,7 @@ Feature: Arithmetic
     Then the result is valid
 
 
-    @arithmetic
+  @arithmetic
   Scenario: Subtract two numbers
     Given I have two integers a and b
     When a is subtract from b

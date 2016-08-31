@@ -35,7 +35,10 @@ def result(request):
     # read scenario passed/failed line
     progress_list = result_report_str[last_four_lines+1].split()
     total_scenario = int(progress_list[0]) + int(progress_list[3])
-    scenario_pass = int(progress_list[0]) * 100 / total_scenario
+    if total_scenario > 0:
+        scenario_pass = int(progress_list[0]) * 100 / total_scenario
+    else:
+        scenario_pass = 0
     scenario_fail = 100 - scenario_pass
     pass_percentage = str(scenario_pass) + "%"
     fail_percentage = str(scenario_fail) + "%"
@@ -56,7 +59,10 @@ def detail(request, feature_id):
         for line in file:
             line = line.strip()
             if line.startswith('Scenario', 0, len(line)):
-                scenario = feature.scenario_set.create(name=line, tag=previous_line)
+                if previous_line:
+                    scenario = feature.scenario_set.create(name=line, tag=previous_line)
+                else:
+                    scenario = feature.scenario_set.create(name=line, tag=feature.file_path)
                 scenario.save()
             else:
                 previous_line = line
@@ -68,10 +74,16 @@ def detailresult(request, feature_id):
     last_four_lines = -4
     feature = get_object_or_404(Feature, pk=feature_id)
     scenario_list = feature.scenario_set.all()
-    command_line = "behave"
+    command_line = "behave -t="
     for scenario in scenario_list:
-        if command_line.find(scenario.tag, 0, len(command_line)) is -1:
-            command_line += " -t=" + scenario.tag
+        if scenario.tag.startswith('./features'):
+            command_line = "behave " + scenario.tag
+            break
+        elif command_line.find(scenario.tag, 0, len(command_line)) is -1:
+            if command_line != "behave -t=":
+                command_line += "," + scenario.tag
+            else:
+                command_line += scenario.tag
     args = shlex.split(command_line)
     (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
     result_report_str = out.splitlines()
@@ -80,7 +92,10 @@ def detailresult(request, feature_id):
     # read scenario passed/failed line
     progress_list = result_report_str[last_four_lines+1].split()
     total_scenario = int(progress_list[0]) + int(progress_list[3])
-    scenario_pass = int(progress_list[0]) * 100 / total_scenario
+    if total_scenario > 0:
+        scenario_pass = int(progress_list[0]) * 100 / total_scenario
+    else:
+        scenario_pass = 0
     scenario_fail = 100 - scenario_pass
     pass_percentage = str(scenario_pass) + "%"
     fail_percentage = str(scenario_fail) + "%"
