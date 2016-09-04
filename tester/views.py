@@ -2,7 +2,7 @@ import os
 import shlex
 from subprocess import Popen, PIPE
 from django.shortcuts import render, get_object_or_404
-from .models import Feature
+from .models import Feature, UserData
 
 
 # Create your views here.
@@ -11,16 +11,32 @@ def index(request):
     args = shlex.split(command_line)
     (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
     feature_list_str = out.splitlines()
+    # update database for feature list
+    Feature.objects.all().delete()
+    for line in feature_list_str:
+        file_name = line.replace("./features/", "")
+        feature = Feature(name=file_name, file_path=line)
+        feature.save()
     feature_list = Feature.objects.order_by('name')
-    # update database automatically for any new features
-    if len(feature_list_str) != feature_list.count():
-        Feature.objects.all().delete()
-        for line in feature_list_str:
-            file_name = line.replace("./features/", "")
-            feaute = Feature(name=file_name, file_path=line)
-            feaute.save()
-        feature_list = Feature.objects.order_by('name')
-    context = {'feature_list': feature_list}
+    # extract user data
+    user_data = []
+    start_user_data = False
+    with open('behave.ini') as config_file:
+        for line in config_file:
+            if 'behave.userdata' in line:
+                start_user_data = True
+            elif start_user_data and "end of userdata" not in line:
+                user_data.append(line)
+            elif "end of userdata" in line:
+                break
+    # update database for user data
+    UserData.objects.all().delete()
+    for line in user_data:
+        temp_list = line.split('=')
+        user_data = UserData(name=temp_list[0], value=temp_list[1].strip())
+        user_data.save()
+    user_data_list = UserData.objects.all()
+    context = {'feature_list': feature_list, 'user_data_list': user_data_list}
     return render(request, 'tester/index.html', context)
 
 
