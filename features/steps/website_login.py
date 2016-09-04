@@ -5,6 +5,7 @@ from hamcrest import *
 
 @given(u'Website is accessible')
 def step_impl(context):
+    context.driver = webdriver.Firefox()
     url = "https://" + context.server_ip
     context.driver.get(url)
     context.title_logout = context.driver.title
@@ -27,4 +28,7 @@ def step_impl(context, login):
 @then(u'login is success')
 def step_impl(context):
     title_login = context.driver.title
+    context.driver.quit()
     assert_that(title_login, is_not(context.title_logout))
+    context.logger.info(title_login)
+    context.logger.info(context.title_logout)
