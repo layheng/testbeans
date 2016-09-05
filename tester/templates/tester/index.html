@@ -39,12 +39,13 @@
             <h2>Run all tests</h2> <br>
             <form class="form-horizontal" action="{% url 'tester:result' %}" method="post">
                 {% csrf_token %}
+                <p>* Update the following parameters in the configuration file "behave.ini" if they are incorrect.</p>
                 {% for userdata in user_data_list %}
                 <div class="form-group">
-                        <label class="col-sm-2 control-label" for="{{userdata}}">{{userdata}}:</label>
-                        <div class="col-sm-10">
-                             <input class="form-control" id="{{userdata}}" type="text" value="{{ userdata.value  }}">
-                        </div>
+                     <label class="col-sm-2 control-label" for="{{userdata}}">{{userdata}}:</label>
+                     <div class="col-sm-10">
+                        <p class="form-control-static">{{ userdata.value  }}</p>
+                     </div>
                 </div>
                 {% endfor %}
                 <div class="form-group">
