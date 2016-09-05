@@ -1,4 +1,4 @@
-Feature: Arithmetic
+Feature: Add two numbers
 
 
   Scenario: Add two numbers

@@ -1,6 +1,6 @@
-Feature: Web site
+Feature: Website login
 
-  
+
   Scenario: Website login
     Given Website is accessible
     When login with user element email and password element pass
