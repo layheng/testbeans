@@ -2,9 +2,11 @@ from behave import given, when, then
 from hamcrest import assert_that, is_not
 from selenium import webdriver
 
+
 @given(u'Website is accessible')
 def step_impl(context):
     context.driver = webdriver.Firefox()
+    context.driver.implicitly_wait(60)
     url = "https://" + context.server_ip
     context.driver.get(url)
     context.title_logout = context.driver.title
