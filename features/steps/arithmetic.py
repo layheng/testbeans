@@ -17,3 +17,23 @@ def step_impl(context):
 def step_impl(context):
     context.logger.debug(context.sum)
     assert_that(3, equal_to(context.sum))
+
+
+@when(u'multiplying the numbers')
+def step_impl(context):
+    context.multi = context.a * context.b
+
+
+@then(u'multiply result is valid')
+def step_impl(context):
+    assert_that(2, equal_to(context.multi))
+
+
+@when(u'a is subtracted from b')
+def step_impl(context):
+    context.subtract = context.b - context.a
+
+
+@then(u'subtract result is valid')
+def step_impl(context):
+    assert_that(1, equal_to(context.subtract))
