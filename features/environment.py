@@ -1,3 +1,4 @@
+from selenium import webdriver
 import logging
 LOG_FILENAME = 'testbeans.log'
 logger = logging.getLogger(LOG_FILENAME)
@@ -13,6 +14,7 @@ def before_all(context):
     context.server_ip = context.config.userdata.get('server_ip')
     context.username = context.config.userdata.get('username')
     context.password = context.config.userdata.get('password')
+    context.driver = webdriver.Firefox()
 
 
 def before_feature(context, feature):
@@ -36,5 +38,6 @@ def after_feature(context,feature):
 
 def after_all(context):
     # print("Executing after all")
+    # context.driver.quit()
     pass
 
