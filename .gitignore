@@ -2,5 +2,5 @@
 /reports/
 *.log
 *.pyc
-results.json
+*.json
 
