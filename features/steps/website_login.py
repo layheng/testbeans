@@ -1,12 +1,13 @@
 from behave import given, when, then
 from hamcrest import assert_that, is_not
 from selenium import webdriver
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
 
 
 @given(u'Website is accessible')
 def step_impl(context):
     context.driver = webdriver.Firefox()
-    context.driver.implicitly_wait(60)
     url = "https://" + context.server_ip
     context.driver.get(url)
     context.title_logout = context.driver.title
@@ -30,6 +31,33 @@ def step_impl(context, login):
 def step_impl(context):
     title_login = context.driver.title
     assert_that(title_login, is_not(context.title_logout))
-    context.logger.info(title_login)
-    context.logger.info(context.title_logout)
     # context.driver.quit()
+
+
+@given(u'Gmail website is accessible')
+def step_impl(context):
+    context.driver = webdriver.Firefox()
+    url = "https://" + context.server_ip + "/gmail"
+    context.driver.get(url)
+    context.title_logout = context.driver.title
+
+
+@when(u'entering to Gmail user element {user}')
+def step_impl(context, user):
+    driver_username = context.driver.find_element_by_id(user)
+    driver_next = context.driver.find_element_by_id("next")
+    driver_username.send_keys(context.username)
+    driver_next.click()
+
+
+@when(u'entering to Gmail password element {password}')
+def step_impl(context, password):
+    driver_password = context.driver.find_element_by_id(password)
+    driver_sing_in = context.driver.find_element_by_id("signIn")
+    driver_password.send_keys(context.password)
+    driver_sing_in.click()
+    try:
+        WebDriverWait(context.driver, 10).until(ec.title_contains("Inbox"))
+        context.logger.info(context.driver.title)
+    except Exception as error:
+        context.logger.info(error)
