@@ -3,10 +3,13 @@ from hamcrest import assert_that, is_not
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
+from pyvirtualdisplay import Display
 
 
 @given(u'Website is accessible')
 def step_impl(context):
+    context.display = Display(visible=0, size=(1024, 768))
+    context.display.start()
     context.driver = webdriver.Firefox()
     url = "https://" + context.server_ip
     context.driver.get(url)
@@ -30,8 +33,10 @@ def step_impl(context, login):
 @then(u'login is success')
 def step_impl(context):
     title_login = context.driver.title
+    context.driver.quit()
+    context.display.stop()
     assert_that(title_login, is_not(context.title_logout))
-    # context.driver.quit()
+
 
 
 @given(u'Gmail website is accessible')
