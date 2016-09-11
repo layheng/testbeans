@@ -17,3 +17,13 @@ def step_impl(context):
 def step_impl(context):
     context.logger.debug(context.sum)
     assert_that(3, equal_to(context.sum))
+
+
+@when(u'subtracting a from b')
+def step_impl(context):
+    context.subtract = context.b - context.a
+
+
+@then(u'subtract result is valid')
+def step_impl(context):
+    assert_that(1, equal_to(context.subtract))
