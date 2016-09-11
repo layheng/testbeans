@@ -27,3 +27,13 @@ def step_impl(context):
 @then(u'subtract result is valid')
 def step_impl(context):
     assert_that(1, equal_to(context.subtract))
+
+
+@ when(u'multiplying the numbers')
+def step_impl(context):
+    context.multi = context.a * context.b
+
+
+@ then(u'multiply result is valid')
+def step_impl(context):
+    assert_that(2, equal_to(context.multi))
