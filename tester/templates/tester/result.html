@@ -36,20 +36,20 @@
         <div class="col-lg-6">
 
             <!-- Specific content -->
-            <h2>Test Summary</h2>
-
-            {% if result_summary %}
-                {% for line in result_summary %}
-                       <br> {{ line }}<br>
-                {% endfor %}
-            {% endif %}
+            <h2>Test Results</h2>
+            <br>
             <br>
             <div class="progress">
                 <div class="progress-bar progress-bar-success" style="{{pass_progress}}">{{ pass_percentage}}</div>
                 <div class="progress-bar progress-bar-danger" style="{{fail_progress}}">{{ fail_percentage }}</div>
             </div>
+            {% if result_summary %}
+                {% for line in result_summary %}
+                       <br> {{ line }}<br>
+                {% endfor %}
+            {% endif %}
             <hr>
-
+            <br>
             <h2>Detail Test Results</h2>
             {% if result_lines %}
                 {% for line in result_lines %}
