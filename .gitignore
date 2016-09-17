@@ -3,4 +3,4 @@
 *.log
 *.pyc
 *.json
-
+outputs.text

@@ -42,27 +42,68 @@ def index(request):
 
 def result(request):
     last_four_lines = -4
-    command_line = "behave"
+    command_line = "behave -f plain -o outputs.text"
     args = shlex.split(command_line)
     (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
     result_report_str = out.splitlines()
     result_summary = result_report_str[last_four_lines:]
-    result_lines = result_report_str[:last_four_lines]
-    # read scenario passed/failed line
-    progress_list = result_report_str[last_four_lines+1].split()
-    total_scenario = int(progress_list[0]) + int(progress_list[3])
+
+    # Detail test results from outputs.text
+    result_lines = []
+    with open('outputs.text') as f:
+        for line in f:
+            result_lines.append(line)
+
+    # read feature/scenario/steps passed/failed line
+    feature_list = result_report_str[last_four_lines].split()
+    total_features = int(feature_list[0]) + int(feature_list[3])
+    if total_features > 0:
+        feature_pass = int(feature_list[0]) * 100 / total_features
+    else:
+        feature_pass = 0
+    feature_fail = 100 - feature_pass
+    feature_passed_percentage = str(feature_pass) + "%"
+    feature_failed_percentage = str(feature_fail) + "%"
+    feature_passed_progress = "width: " + feature_passed_percentage
+    feature_failed_progress = "width: " + feature_failed_percentage
+
+    scenario_list = result_report_str[last_four_lines+1].split()
+    total_scenario = int(scenario_list[0]) + int(scenario_list[3])
     if total_scenario > 0:
-        scenario_pass = int(progress_list[0]) * 100 / total_scenario
+        scenario_pass = int(scenario_list[0]) * 100 / total_scenario
     else:
         scenario_pass = 0
     scenario_fail = 100 - scenario_pass
-    pass_percentage = str(scenario_pass) + "%"
-    fail_percentage = str(scenario_fail) + "%"
-    pass_progress = "width: " + pass_percentage
-    fail_progress = "width: " + fail_percentage
+    scenario_passed_percentage = str(scenario_pass) + "%"
+    scenario_failed_percentage = str(scenario_fail) + "%"
+    scenario_passed_progress = "width: " + scenario_passed_percentage
+    scenario_failed_progress = "width: " + scenario_failed_percentage
+
+    step_list = result_report_str[last_four_lines+2].split()
+    total_steps = int(step_list[0]) + int(step_list[3])
+    if total_steps > 0:
+        step_pass = int(step_list[0]) * 100 / total_steps
+    else:
+        step_pass = 0
+    step_fail = 100 - step_pass
+    step_passed_percentage = str(step_pass) + "%"
+    step_failed_percentage = str(step_fail) + "%"
+    step_passed_progress = "width: " + step_passed_percentage
+    step_failed_progress = "width: " + step_failed_percentage
+
     context = {'result_lines': result_lines, 'result_summary': result_summary,
-               'pass_progress': pass_progress, 'fail_progress': fail_progress,
-               'pass_percentage': pass_percentage, 'fail_percentage': fail_percentage}
+               'feature_passed_progress': feature_passed_progress,
+               'feature_failed_progress': feature_failed_progress,
+               'feature_passed_percentage': feature_passed_percentage,
+               'feature_failed_percentage': feature_failed_percentage,
+               'scenario_passed_progress': scenario_passed_progress,
+               'scenario_failed_progress': scenario_failed_progress,
+               'scenario_passed_percentage': scenario_passed_percentage,
+               'scenario_failed_percentage': scenario_failed_percentage,
+               'step_passed_progress': step_passed_progress,
+               'step_failed_progress': step_failed_progress,
+               'step_passed_percentage': step_passed_percentage,
+               'step_failed_percentage': step_failed_percentage}
     return render(request, 'tester/result.html', context)
 
 
@@ -90,13 +131,13 @@ def detailresult(request, feature_id):
     last_four_lines = -4
     feature = get_object_or_404(Feature, pk=feature_id)
     scenario_list = feature.scenario_set.all()
-    command_line = "behave -t="
+    command_line = "behave -f plain -o outputs.text -t="
     for scenario in scenario_list:
         if scenario.tag.startswith('./features'):
-            command_line = "behave " + scenario.tag
+            command_line = "behave -f plain -o outputs.text " + scenario.tag
             break
         elif command_line.find(scenario.tag, 0, len(command_line)) is -1:
-            if command_line != "behave -t=":
+            if command_line != "behave -f plain -o outputs.text -t=":
                 command_line += "," + scenario.tag
             else:
                 command_line += scenario.tag
@@ -104,20 +145,61 @@ def detailresult(request, feature_id):
     (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
     result_report_str = out.splitlines()
     result_summary = result_report_str[last_four_lines:]
-    result_lines = result_report_str[:last_four_lines]
-    # read scenario passed/failed line
-    progress_list = result_report_str[last_four_lines+1].split()
-    total_scenario = int(progress_list[0]) + int(progress_list[3])
+
+    # Detail test results from outputs.text
+    result_lines = []
+    with open('outputs.text') as f:
+        for line in f:
+            result_lines.append(line)
+
+    # read feature/scenario/steps passed/failed line
+    feature_list = result_report_str[last_four_lines].split()
+    total_features = int(feature_list[0]) + int(feature_list[3])
+    if total_features > 0:
+        feature_pass = int(feature_list[0]) * 100 / total_features
+    else:
+        feature_pass = 0
+    feature_fail = 100 - feature_pass
+    feature_passed_percentage = str(feature_pass) + "%"
+    feature_failed_percentage = str(feature_fail) + "%"
+    feature_passed_progress = "width: " + feature_passed_percentage
+    feature_failed_progress = "width: " + feature_failed_percentage
+
+    scenario_list = result_report_str[last_four_lines + 1].split()
+    total_scenario = int(scenario_list[0]) + int(scenario_list[3])
     if total_scenario > 0:
-        scenario_pass = int(progress_list[0]) * 100 / total_scenario
+        scenario_pass = int(scenario_list[0]) * 100 / total_scenario
     else:
         scenario_pass = 0
     scenario_fail = 100 - scenario_pass
-    pass_percentage = str(scenario_pass) + "%"
-    fail_percentage = str(scenario_fail) + "%"
-    pass_progress = "width: " + pass_percentage
-    fail_progress = "width: " + fail_percentage
+    scenario_passed_percentage = str(scenario_pass) + "%"
+    scenario_failed_percentage = str(scenario_fail) + "%"
+    scenario_passed_progress = "width: " + scenario_passed_percentage
+    scenario_failed_progress = "width: " + scenario_failed_percentage
+
+    step_list = result_report_str[last_four_lines + 2].split()
+    total_steps = int(step_list[0]) + int(step_list[3])
+    if total_steps > 0:
+        step_pass = int(step_list[0]) * 100 / total_steps
+    else:
+        step_pass = 0
+    step_fail = 100 - step_pass
+    step_passed_percentage = str(step_pass) + "%"
+    step_failed_percentage = str(step_fail) + "%"
+    step_passed_progress = "width: " + step_passed_percentage
+    step_failed_progress = "width: " + step_failed_percentage
+
     context = {'result_lines': result_lines, 'result_summary': result_summary,
-               'pass_progress': pass_progress, 'fail_progress': fail_progress,
-               'pass_percentage': pass_percentage, 'fail_percentage': fail_percentage}
+               'feature_passed_progress': feature_passed_progress,
+               'feature_failed_progress': feature_failed_progress,
+               'feature_passed_percentage': feature_passed_percentage,
+               'feature_failed_percentage': feature_failed_percentage,
+               'scenario_passed_progress': scenario_passed_progress,
+               'scenario_failed_progress': scenario_failed_progress,
+               'scenario_passed_percentage': scenario_passed_percentage,
+               'scenario_failed_percentage': scenario_failed_percentage,
+               'step_passed_progress': step_passed_progress,
+               'step_failed_progress': step_failed_progress,
+               'step_passed_percentage': step_passed_percentage,
+               'step_failed_percentage': step_failed_percentage}
     return render(request, 'tester/result.html', context)

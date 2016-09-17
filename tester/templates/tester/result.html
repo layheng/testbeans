@@ -38,19 +38,35 @@
             <!-- Specific content -->
             <h2>Test Results</h2>
             <br>
-            <br>
+            <p>Features</p>
             <div class="progress">
-                <div class="progress-bar progress-bar-success" style="{{pass_progress}}">{{ pass_percentage}}</div>
-                <div class="progress-bar progress-bar-danger" style="{{fail_progress}}">{{ fail_percentage }}</div>
+                <div class="progress-bar progress-bar-success" style="{{feature_passed_progress}}">{{ feature_passed_percentage}}</div>
+                <div class="progress-bar progress-bar-danger" style="{{feature_failed_progress}}">{{ feature_failed_percentage }}</div>
             </div>
-            {% if result_summary %}
-                {% for line in result_summary %}
-                       <br> {{ line }}<br>
-                {% endfor %}
-            {% endif %}
+            {{ result_summary.0 }}
+            <br>
+            <br>
+            <br>
+            <p>Scenarios</p>
+            <div class="progress">
+                <div class="progress-bar progress-bar-success" style="{{scenario_passed_progress}}">{{ scenario_passed_percentage}}</div>
+                <div class="progress-bar progress-bar-danger" style="{{scenario_failed_progress}}">{{ scenario_failed_percentage }}</div>
+            </div>
+            {{ result_summary.1 }}
+            <br>
+            <br>
+            <br>
+            <p>Steps</p>
+            <div class="progress">
+                <div class="progress-bar progress-bar-success" style="{{step_passed_progress}}">{{ step_passed_percentage}}</div>
+                <div class="progress-bar progress-bar-danger" style="{{step_failed_progress}}">{{ step_failed_percentage }}</div>
+            </div>
+            {{ result_summary.2 }}
+            <br>
             <hr>
             <br>
             <h2>Detail Test Results</h2>
+            <br>
             {% if result_lines %}
                 {% for line in result_lines %}
                         {{ line }} <br>
