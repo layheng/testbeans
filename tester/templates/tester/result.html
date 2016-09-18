@@ -10,6 +10,7 @@
 
     {% load static %}
 
+    <link rel="icon" href="{% static 'image/testbeans.ico' %}" >
     <!-- Bootstrap core CSS -->
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" >
 
@@ -40,8 +41,8 @@
             <br>
             <p>Features</p>
             <div class="progress">
-                <div class="progress-bar progress-bar-success" style="{{feature_passed_progress}}">{{ feature_passed_percentage}}</div>
-                <div class="progress-bar progress-bar-danger" style="{{feature_failed_progress}}">{{ feature_failed_percentage }}</div>
+                <div class="progress-bar progress-bar-success" style="{{passed_progress.0}}">{{ passed_percentage.0}}</div>
+                <div class="progress-bar progress-bar-danger" style="{{failed_progress.0}}">{{ failed_percentage.0 }}</div>
             </div>
             {{ result_summary.0 }}
             <br>
@@ -49,8 +50,8 @@
             <br>
             <p>Scenarios</p>
             <div class="progress">
-                <div class="progress-bar progress-bar-success" style="{{scenario_passed_progress}}">{{ scenario_passed_percentage}}</div>
-                <div class="progress-bar progress-bar-danger" style="{{scenario_failed_progress}}">{{ scenario_failed_percentage }}</div>
+                <div class="progress-bar progress-bar-success" style="{{passed_progress.1}}">{{passed_percentage.1}}</div>
+                <div class="progress-bar progress-bar-danger" style="{{failed_progress.1}}">{{failed_percentage.1}}</div>
             </div>
             {{ result_summary.1 }}
             <br>
@@ -58,10 +59,14 @@
             <br>
             <p>Steps</p>
             <div class="progress">
-                <div class="progress-bar progress-bar-success" style="{{step_passed_progress}}">{{ step_passed_percentage}}</div>
-                <div class="progress-bar progress-bar-danger" style="{{step_failed_progress}}">{{ step_failed_percentage }}</div>
+                <div class="progress-bar progress-bar-success" style="{{passed_progress.2}}">{{passed_percentage.2}}</div>
+                <div class="progress-bar progress-bar-danger" style="{{failed_progress.2}}">{{failed_percentage.2}}</div>
             </div>
             {{ result_summary.2 }}
+            <br>
+            <br>
+            <br>
+            {{ result_summary.3 }}
             <br>
             <hr>
             <br>

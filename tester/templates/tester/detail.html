@@ -10,6 +10,7 @@
 
     {% load static %}
 
+    <link rel="icon" href="{% static 'image/testbeans.ico' %}" >
     <!-- Bootstrap core CSS -->
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" >
 
@@ -49,10 +50,6 @@
                 {% csrf_token %}
                 <input type="submit" value="Run" class="btn btn-lg btn-success" />
             </form>
-
-            {% for line in file_content %}
-                <br>{{ line }}</br>
-            {% endfor %}
 
         </div> <!--/col-lg-6  -->
 
