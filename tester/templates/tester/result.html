@@ -14,9 +14,64 @@
     <!-- Bootstrap core CSS -->
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css" >
 
-    <!-- Custom styles for this template
-    <link href="jumbotron-narrow.css" rel="stylesheet"> -->
+    <!-- Custom styles for this template -->
     <link href="{% static 'bootstrap/css/jumbotron-narrow.css' %}" rel="stylesheet" type="text/css" >
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChartFeatures);
+      google.charts.setOnLoadCallback(drawChartScenarios);
+
+      // Features
+      function drawChartFeatures() {
+        var passed_value = {{ passed_percentage.0 }}
+        var failed_value = {{ failed_percentage.0 }}
+        var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Name');
+            data.addColumn('number', 'Percentage');
+            data.addRows([
+              ['Passed', passed_value],
+              ['Failed', failed_value]
+            ]);
+        var options = {
+          title: 'Features',
+          width:400,
+          height:350,
+          colors: ['#00CC00', '#FF0000'],
+          titleTextStyle: {fontSize: 15},
+          legend: 'none'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart_features'));
+        chart.draw(data, options);
+      }
+
+      function drawChartScenarios() {
+        var passed_value = {{ passed_percentage.1 }}
+        var failed_value = {{ failed_percentage.1 }}
+        var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Name');
+            data.addColumn('number', 'Percentage');
+            data.addRows([
+              ['Passed', passed_value],
+              ['Failed', failed_value]
+            ]);
+        var options = {
+          title: 'Scenarios',
+          width:350,
+          height:350,
+          colors: ['#00CC00', '#FF0000'],
+          pieHole: 0.4,
+          titleTextStyle: {fontSize: 15},
+          legend: 'none'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart_scenarios'));
+        chart.draw(data, options);
+      }
+
+    </script>
 
 </head>
 
@@ -38,35 +93,22 @@
 
             <!-- Specific content -->
             <h2>Test Results</h2>
-            <br>
-            <p>Features</p>
-            <div class="progress">
-                <div class="progress-bar progress-bar-success" style="{{passed_progress.0}}">{{ passed_percentage.0}}</div>
-                <div class="progress-bar progress-bar-danger" style="{{failed_progress.0}}">{{ failed_percentage.0 }}</div>
-            </div>
-            {{ result_summary.0 }}
-            <br>
-            <br>
-            <br>
-            <p>Scenarios</p>
-            <div class="progress">
-                <div class="progress-bar progress-bar-success" style="{{passed_progress.1}}">{{passed_percentage.1}}</div>
-                <div class="progress-bar progress-bar-danger" style="{{failed_progress.1}}">{{failed_percentage.1}}</div>
-            </div>
-            {{ result_summary.1 }}
-            <br>
-            <br>
-            <br>
-            <p>Steps</p>
-            <div class="progress">
-                <div class="progress-bar progress-bar-success" style="{{passed_progress.2}}">{{passed_percentage.2}}</div>
-                <div class="progress-bar progress-bar-danger" style="{{failed_progress.2}}">{{failed_percentage.2}}</div>
-            </div>
-            {{ result_summary.2 }}
-            <br>
-            <br>
-            <br>
-            {{ result_summary.3 }}
+
+            <!--Table and divs that hold the pie charts-->
+            <table>
+                <tbody>
+                  <tr>
+                    <td><div id="piechart_features"></div></td>
+                    <td><div id="piechart_scenarios"></div></td>
+                  </tr>
+                </tbody>
+            </table>
+            <h3>Test Summary</h3>
+            {% if result_summary %}
+                 {% for line in result_summary %}
+                        <br> {{ line }} <br>
+                 {% endfor %}
+            {% endif %}
             <br>
             <hr>
             <br>
@@ -74,7 +116,7 @@
             <br>
             {% if result_lines %}
                 {% for line in result_lines %}
-                        {{ line }} <br>
+                       {{ line }} <br>
                 {% endfor %}
             {% endif %}
 

@@ -59,13 +59,10 @@ def result(request):
             result_lines.append(line)
 
     # Decode feature/scenario/steps passed/failed numbers
-    (passed_percentage, failed_percentage,
-     passed_progress, failed_progress) = decode_test_summary(result_summary)
+    (passed_percentage, failed_percentage) = decode_test_summary(result_summary)
 
     context = {'result_lines': result_lines,
                'result_summary': result_summary,
-               'passed_progress': passed_progress,
-               'failed_progress': failed_progress,
                'passed_percentage': passed_percentage,
                'failed_percentage': failed_percentage}
     return render(request, 'tester/result.html', context)
@@ -119,13 +116,10 @@ def detailresult(request, feature_id):
             result_lines.append(line)
 
     # Decode feature/scenario/steps passed/failed numbers
-    (passed_percentage, failed_percentage,
-     passed_progress, failed_progress) = decode_test_summary(result_summary)
+    (passed_percentage, failed_percentage) = decode_test_summary(result_summary)
 
     context = {'result_lines': result_lines,
                'result_summary': result_summary,
-               'passed_progress': passed_progress,
-               'failed_progress': failed_progress,
                'passed_percentage': passed_percentage,
                'failed_percentage': failed_percentage}
     return render(request, 'tester/result.html', context)
@@ -139,8 +133,6 @@ def decode_test_summary(summary):
     """
     passed_percentage = []
     failed_percentage = []
-    passed_progress = []
-    failed_progress = []
     pass_index = 0
     fail_index = 3
 
@@ -148,42 +140,33 @@ def decode_test_summary(summary):
     feature_list = summary[0].split()
     total_features = int(feature_list[pass_index]) + int(feature_list[fail_index])
     if total_features > 0:
-        pass_value = int(feature_list[pass_index]) * 100.0 / total_features
+        passed_value = float(feature_list[pass_index]) / total_features
     else:
-        pass_value = 0.0
-    feature_pass = "{0:.2f}".format(pass_value)
-    feature_fail = "{0:.2f}".format(100.0 - pass_value)
-    passed_percentage.append(feature_pass + "%")
-    failed_percentage.append(feature_fail + "%")
-    passed_progress.append("width: " + feature_pass + "%")
-    failed_progress.append("width: " + feature_fail + "%")
+        passed_value = 0.0
+    failed_value = 1.0 - passed_value
+    passed_percentage.append(passed_value)
+    failed_percentage.append(failed_value)
 
     # decode scenarios
     scenario_list = summary[1].split()
     total_scenario = int(scenario_list[pass_index]) + int(scenario_list[fail_index])
     if total_scenario > 0:
-        pass_value = int(scenario_list[pass_index]) * 100.0 / total_scenario
+        passed_value = float(scenario_list[pass_index]) / total_scenario
     else:
-        pass_value = 0.0
-    scenario_pass = "{0:.2f}".format(pass_value)
-    scenario_fail = "{0:.2f}".format(100.0 - pass_value)
-    passed_percentage.append(scenario_pass + "%")
-    failed_percentage.append(scenario_fail + "%")
-    passed_progress.append("width: " + scenario_pass + "%")
-    failed_progress.append("width: " + scenario_fail + "%")
+        passed_value = 0.0
+    failed_value = 1.0 - passed_value
+    passed_percentage.append(passed_value)
+    failed_percentage.append(failed_value)
 
     # decode steps
     step_list = summary[2].split()
     total_steps = int(step_list[pass_index]) + int(step_list[fail_index])
     if total_steps > 0:
-        pass_value = int(step_list[pass_index]) * 100.0 / total_steps
+        passed_value = float(step_list[pass_index]) / total_steps
     else:
-        pass_value = 0.0
-    step_pass = "{0:.2f}".format(pass_value)
-    step_fail = "{0:.2f}".format(100.0 - pass_value)
-    passed_percentage.append(step_pass + "%")
-    failed_percentage.append(step_fail + "%")
-    passed_progress.append("width: " + step_pass + "%")
-    failed_progress.append("width: " + step_fail + "%")
+        passed_value = 0.0
+    failed_value = 1.0 - passed_value
+    passed_percentage.append(passed_value)
+    failed_percentage.append(failed_value)
 
-    return passed_percentage, failed_percentage, passed_progress, failed_progress
+    return passed_percentage, failed_percentage
