@@ -47,19 +47,25 @@ def index(request):
 def result(request):
     last_four_lines = -4
     command_line = "behave -f plain -o outputs.text"
-    args = shlex.split(command_line)
-    (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
-    result_report_str = out.splitlines()
-    result_summary = result_report_str[last_four_lines:]
+    try:
+        args = shlex.split(command_line)
+        (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
+        result_report_str = out.splitlines()
+        result_summary = result_report_str[last_four_lines:]
 
-    # Detail test results from outputs.text
-    result_lines = []
-    with open('outputs.text') as f:
-        for line in f:
-            result_lines.append(line)
+        # Detail test results from outputs.text
+        result_lines = []
+        with open('outputs.text') as f:
+            for line in f:
+                result_lines.append(line)
 
-    # Decode feature/scenario/steps passed/failed numbers
-    (passed_percentage, failed_percentage) = decode_test_summary(result_summary)
+        # Decode feature/scenario/steps passed/failed numbers
+        (passed_percentage, failed_percentage) = decode_test_summary(result_summary)
+    except:
+        result_summary = [out, err]
+        result_lines = [out, err]
+        passed_percentage = 0
+        failed_percentage = 0
 
     context = {'result_lines': result_lines,
                'result_summary': result_summary,
@@ -104,19 +110,25 @@ def detailresult(request, feature_id):
                 command_line += "," + scenario.tag
             else:
                 command_line += scenario.tag
-    args = shlex.split(command_line)
-    (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
-    result_report_str = out.splitlines()
-    result_summary = result_report_str[last_four_lines:]
+    try:
+        args = shlex.split(command_line)
+        (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
+        result_report_str = out.splitlines()
+        result_summary = result_report_str[last_four_lines:]
 
-    # Detail test results from outputs.text
-    result_lines = []
-    with open('outputs.text') as f:
-        for line in f:
-            result_lines.append(line)
+        # Detail test results from outputs.text
+        result_lines = []
+        with open('outputs.text') as f:
+            for line in f:
+                result_lines.append(line)
 
-    # Decode feature/scenario/steps passed/failed numbers
-    (passed_percentage, failed_percentage) = decode_test_summary(result_summary)
+        # Decode feature/scenario/steps passed/failed numbers
+        (passed_percentage, failed_percentage) = decode_test_summary(result_summary)
+    except:
+        result_summary = [out, err]
+        result_lines = [out, err]
+        passed_percentage = 0
+        failed_percentage = 0
 
     context = {'result_lines': result_lines,
                'result_summary': result_summary,
