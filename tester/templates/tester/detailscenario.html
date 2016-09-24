@@ -36,16 +36,11 @@
         <div class="col-lg-6">
 
             <!-- Specific content -->
-            <h2>{{feature}}</h2> <br>
+            <h3>{{scenario}}</h3> <br>
 
-            <ul>
-            {% for scenario in feature.scenario_set.all %}
-                <li><a href="{% url 'tester:detailscenario' feature.id scenario.id %}">{{scenario}}</a></li>
-            {% endfor %}
-            </ul>
             <br>
 
-            <form action="{% url 'tester:detailresult' feature.id %}" method="post">
+            <form action="{% url 'tester:detailscenarioresult' scenario.id %}" method="post">
                 {% csrf_token %}
                 <input type="submit" value="Run" class="btn btn-lg btn-success" />
             </form>

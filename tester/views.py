@@ -2,7 +2,7 @@ import os
 import shlex
 from subprocess import Popen, PIPE
 from django.shortcuts import render, get_object_or_404
-from .models import Feature, UserData
+from .models import Feature, Scenario, UserData
 
 
 # Create your views here.
@@ -99,17 +99,47 @@ def detail(request, feature_id):
 def detailresult(request, feature_id):
     last_four_lines = -4
     feature = get_object_or_404(Feature, pk=feature_id)
-    scenario_list = feature.scenario_set.all()
-    command_line = "behave -f plain -o outputs.text -t="
-    for scenario in scenario_list:
-        if scenario.tag.startswith('./features'):
-            command_line = "behave -f plain -o outputs.text " + scenario.tag
-            break
-        elif command_line.find(scenario.tag, 0, len(command_line)) is -1:
-            if command_line != "behave -f plain -o outputs.text -t=":
-                command_line += "," + scenario.tag
-            else:
-                command_line += scenario.tag
+    command_line = "behave -f plain -o outputs.text " + feature.file_path
+    try:
+        args = shlex.split(command_line)
+        (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
+        result_report_str = out.splitlines()
+        result_summary = result_report_str[last_four_lines:]
+
+        # Detail test results from outputs.text
+        result_lines = []
+        with open('outputs.text') as f:
+            for line in f:
+                result_lines.append(line)
+
+        # Decode feature/scenario/steps passed/failed numbers
+        (passed_percentage, failed_percentage) = decode_test_summary(result_summary)
+    except:
+        result_summary = [out, err]
+        result_lines = [out, err]
+        passed_percentage = 0
+        failed_percentage = 0
+
+    context = {'result_lines': result_lines,
+               'result_summary': result_summary,
+               'passed_percentage': passed_percentage,
+               'failed_percentage': failed_percentage}
+    return render(request, 'tester/result.html', context)
+
+
+def detailscenario(request, feature_id, scenario_id):
+    feature = get_object_or_404(Feature, pk=feature_id)
+    scenario = feature.scenario_set.get(pk=scenario_id)
+
+    context = {'feature': feature, 'scenario': scenario}
+    return render(request, 'tester/detailscenario.html', context)
+
+
+def detailscenarioresult(request, scenario_id):
+    last_four_lines = -4
+    scenario = get_object_or_404(Scenario, pk=scenario_id)
+    scenario_name_list = scenario.name.split()
+    command_line = "behave -f plain -o outputs.text -n " + scenario_name_list[1]
     try:
         args = shlex.split(command_line)
         (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
