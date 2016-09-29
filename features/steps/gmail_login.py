@@ -39,7 +39,6 @@ def step_impl(context, password):
 
 @then(u'Gmail login is success')
 def step_impl(context):
-    title_login = context.driver.title
+    assert_that(context.driver.title, is_not(context.title_logout))
     context.driver.quit()
     context.display.stop()
-    assert_that(title_login, is_not(context.title_logout))

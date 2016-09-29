@@ -39,12 +39,11 @@
             <h2>Run all tests</h2> <br>
             <form class="form-horizontal" action="{% url 'tester:result' %}" method="post">
                 {% csrf_token %}
-                <p>* Update the following parameters in the configuration file "behave.ini" if they are incorrect.</p>
                 <table class="table table-striped">
                     <thead>
                       <tr>
                         <th>Parameter</th>
-                        <th>Value</th>
+                        <th></th>
                       </tr>
                     </thead>
                     <tbody>

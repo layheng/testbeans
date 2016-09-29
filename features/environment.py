@@ -13,6 +13,7 @@ def before_all(context):
     context.server_ip = context.config.userdata.get('server_ip')
     context.username = context.config.userdata.get('username')
     context.password = context.config.userdata.get('password')
+    context.pvq = context.config.userdata.get('pvq')
 
 
 def before_feature(context, feature):

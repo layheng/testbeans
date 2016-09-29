@@ -1,8 +1,8 @@
-Feature: Gmail login
+Feature: TC-0003 Gmail login
 
 
   @gmail
-  Scenario: Gmail login
+  Scenario: TC-0003 Gmail login
     Given Gmail website is accessible
     When entering to Gmail user element Email
     When entering to Gmail password element Passwd
