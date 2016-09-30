@@ -13,7 +13,8 @@ def index(request):
     feature_list_str = out.splitlines()
 
     # update database for feature list
-    Feature.objects.all().delete()
+    if Feature.objects.all():
+        Feature.objects.all().delete()
     for line in feature_list_str:
         file_name = line.replace("./features/", "")
         feature = Feature(name=file_name, file_path=line)
@@ -33,7 +34,8 @@ def index(request):
                 break
 
     # update database for user data
-    UserData.objects.all().delete()
+    if UserData.objects.all():
+        UserData.objects.all().delete()
     for line in user_data:
         temp_list = line.split('=')
         user_data = UserData(name=temp_list[0], value=temp_list[1].strip())
@@ -46,7 +48,13 @@ def index(request):
 
 def result(request):
     last_four_lines = -4
-    command_line = "behave -f plain -o outputs.text"
+    # read parameters
+    user_data_list = UserData.objects.all()
+    options = ""
+    for user_data in user_data_list:
+        options += " -D " + user_data.name + "=" + request.POST[user_data.name]
+    # put together the command line string
+    command_line = "behave -f plain -o outputs.text" + options
     try:
         args = shlex.split(command_line)
         (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
@@ -76,7 +84,8 @@ def result(request):
 
 def detail(request, feature_id):
     feature = get_object_or_404(Feature, pk=feature_id)
-    feature.scenario_set.all().delete()
+    if feature.scenario_set.all():
+        feature.scenario_set.all().delete()
 
     # update scenarios to database for a selected feature
     previous_line = ''
@@ -92,14 +101,41 @@ def detail(request, feature_id):
             else:
                 previous_line = line
 
-    context = {'feature': feature}
+    # extract user data
+    user_data = []
+    start_user_data = False
+    with open('behave.ini') as config_file:
+        for line in config_file:
+            if 'behave.userdata' in line:
+                start_user_data = True
+            elif start_user_data and "end of userdata" not in line:
+                user_data.append(line)
+            elif "end of userdata" in line:
+                break
+
+    # update database for user data
+    if UserData.objects.all():
+        UserData.objects.all().delete()
+    for line in user_data:
+        temp_list = line.split('=')
+        user_data = UserData(name=temp_list[0], value=temp_list[1].strip())
+        user_data.save()
+    user_data_list = UserData.objects.all()
+
+    context = {'feature': feature, 'user_data_list': user_data_list}
     return render(request, 'tester/detail.html', context)
 
 
 def detailresult(request, feature_id):
     last_four_lines = -4
+    # read parameters
+    user_data_list = UserData.objects.all()
+    options = ""
+    for user_data in user_data_list:
+        options += " -D " + user_data.name + "=" + request.POST[user_data.name]
+    # put together the command line string
     feature = get_object_or_404(Feature, pk=feature_id)
-    command_line = "behave -f plain -o outputs.text " + feature.file_path
+    command_line = "behave -f plain -o outputs.text " + feature.file_path + options
     try:
         args = shlex.split(command_line)
         (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
@@ -131,15 +167,42 @@ def detailscenario(request, feature_id, scenario_id):
     feature = get_object_or_404(Feature, pk=feature_id)
     scenario = feature.scenario_set.get(pk=scenario_id)
 
-    context = {'feature': feature, 'scenario': scenario}
+    # extract user data
+    user_data = []
+    start_user_data = False
+    with open('behave.ini') as config_file:
+        for line in config_file:
+            if 'behave.userdata' in line:
+                start_user_data = True
+            elif start_user_data and "end of userdata" not in line:
+                user_data.append(line)
+            elif "end of userdata" in line:
+                break
+
+    # update database for user data
+    if UserData.objects.all():
+        UserData.objects.all().delete()
+    for line in user_data:
+        temp_list = line.split('=')
+        user_data = UserData(name=temp_list[0], value=temp_list[1].strip())
+        user_data.save()
+    user_data_list = UserData.objects.all()
+
+    context = {'feature': feature, 'scenario': scenario, 'user_data_list': user_data_list}
     return render(request, 'tester/detailscenario.html', context)
 
 
 def detailscenarioresult(request, scenario_id):
     last_four_lines = -4
+    # read parameters
+    user_data_list = UserData.objects.all()
+    options = ""
+    for user_data in user_data_list:
+        options += " -D " + user_data.name + "=" + request.POST[user_data.name]
+    # put together the command line string
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     scenario_name_list = scenario.name.split()
-    command_line = "behave -f plain -o outputs.text -n " + scenario_name_list[1]
+    command_line = "behave -f plain -o outputs.text -n " + scenario_name_list[1] + options
     try:
         args = shlex.split(command_line)
         (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()

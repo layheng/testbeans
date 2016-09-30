@@ -39,25 +39,27 @@
             <h2>Run all tests</h2> <br>
             <form class="form-horizontal" action="{% url 'tester:result' %}" method="post">
                 {% csrf_token %}
-                <table class="table table-striped">
-                    <thead>
-                      <tr>
-                        <th>Parameter</th>
-                        <th></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                    {% for userdata in user_data_list %}
-                        <tr>
-                          <td>{{userdata}}</td>
-                          <td>{{userdata.value}}</td>
-                        </tr>
+                <div class="form-group">
+                    <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>Parameters</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for userdata in user_data_list %}
+                            <tr>
+                              <td>{{userdata}}</td>
+                              <td><input type="text" class="form-control" name="{{userdata}}" value="{{userdata.value}}" ></td>
+                            </tr>
                         {% endfor %}
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <input class="btn btn-lg btn-success" type="submit" value="Run"/>
+                        <input class="btn btn-lg btn-success" type="submit" name="run_all" value="Run"/>
                     </div>
                 </div>
             </form>

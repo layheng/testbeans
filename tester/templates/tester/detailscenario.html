@@ -36,13 +36,36 @@
         <div class="col-lg-6">
 
             <!-- Specific content -->
-            <h3>{{scenario}}</h3> <br>
-
-            <br>
-
+            <h2>Test a scenario</h2> <br>
             <form action="{% url 'tester:detailscenarioresult' scenario.id %}" method="post">
                 {% csrf_token %}
-                <input type="submit" value="Run" class="btn btn-lg btn-success" />
+                                <div class="form-group">
+                    <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>Parameters</th>
+                            <th></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {% for userdata in user_data_list %}
+                            <tr>
+                              <td>{{userdata}}</td>
+                              <td><input type="text" class="form-control" name="{{userdata}}" value="{{userdata.value}}" ></td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <hr>
+                <br>
+                <h3>{{scenario}}</h3> <br>
+                <br>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <input class="btn btn-lg btn-success" type="submit" name="run_scenario" value="Run"/>
+                    </div>
+                </div>
             </form>
 
         </div> <!--/col-lg-6  -->
