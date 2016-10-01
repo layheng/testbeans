@@ -38,7 +38,7 @@ def index(request):
         UserData.objects.all().delete()
     for line in user_data:
         temp_list = line.split('=')
-        user_data = UserData(name=temp_list[0], value=temp_list[1].strip())
+        user_data = UserData(name=temp_list[0].strip(), value=temp_list[1].strip())
         user_data.save()
     user_data_list = UserData.objects.all()
 
@@ -48,11 +48,25 @@ def index(request):
 
 def result(request):
     last_four_lines = -4
+
     # read parameters
     user_data_list = UserData.objects.all()
     options = ""
     for user_data in user_data_list:
         options += " -D " + user_data.name + "=" + request.POST[user_data.name]
+
+    # update configuration file behave.ini
+    new_lines =[]
+    with open('behave.ini', 'r') as config_file:
+        for line in config_file:
+            new_lines.append(line)
+            if 'behave.userdata' in line:
+                break
+    for user_data in user_data_list:
+        new_lines.append(user_data.name + "=" + request.POST[user_data.name] + '\n')
+    with open('behave.ini', 'w') as config_file:
+        config_file.writelines(new_lines)
+
     # put together the command line string
     command_line = "behave -f plain -o outputs.text" + options
     try:
@@ -118,7 +132,7 @@ def detail(request, feature_id):
         UserData.objects.all().delete()
     for line in user_data:
         temp_list = line.split('=')
-        user_data = UserData(name=temp_list[0], value=temp_list[1].strip())
+        user_data = UserData(name=temp_list[0].strip(), value=temp_list[1].strip())
         user_data.save()
     user_data_list = UserData.objects.all()
 
@@ -128,11 +142,25 @@ def detail(request, feature_id):
 
 def detailresult(request, feature_id):
     last_four_lines = -4
+
     # read parameters
     user_data_list = UserData.objects.all()
     options = ""
     for user_data in user_data_list:
         options += " -D " + user_data.name + "=" + request.POST[user_data.name]
+
+    # update configuration file behave.ini
+    new_lines =[]
+    with open('behave.ini', 'r') as config_file:
+        for line in config_file:
+            new_lines.append(line)
+            if 'behave.userdata' in line:
+                break
+    for user_data in user_data_list:
+        new_lines.append(user_data.name + "=" + request.POST[user_data.name] + '\n')
+    with open('behave.ini', 'w') as config_file:
+        config_file.writelines(new_lines)
+
     # put together the command line string
     feature = get_object_or_404(Feature, pk=feature_id)
     command_line = "behave -f plain -o outputs.text " + feature.file_path + options
@@ -184,7 +212,7 @@ def detailscenario(request, feature_id, scenario_id):
         UserData.objects.all().delete()
     for line in user_data:
         temp_list = line.split('=')
-        user_data = UserData(name=temp_list[0], value=temp_list[1].strip())
+        user_data = UserData(name=temp_list[0].strip(), value=temp_list[1].strip())
         user_data.save()
     user_data_list = UserData.objects.all()
 
@@ -194,11 +222,25 @@ def detailscenario(request, feature_id, scenario_id):
 
 def detailscenarioresult(request, scenario_id):
     last_four_lines = -4
+
     # read parameters
     user_data_list = UserData.objects.all()
     options = ""
     for user_data in user_data_list:
         options += " -D " + user_data.name + "=" + request.POST[user_data.name]
+
+    # update configuration file behave.ini
+    new_lines =[]
+    with open('behave.ini', 'r') as config_file:
+        for line in config_file:
+            new_lines.append(line)
+            if 'behave.userdata' in line:
+                break
+    for user_data in user_data_list:
+        new_lines.append(user_data.name + "=" + request.POST[user_data.name] + '\n')
+    with open('behave.ini', 'w') as config_file:
+        config_file.writelines(new_lines)
+
     # put together the command line string
     scenario = get_object_or_404(Scenario, pk=scenario_id)
     scenario_name_list = scenario.name.split()
