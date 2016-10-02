@@ -17,6 +17,15 @@
     <!-- Custom styles for this template -->
     <link href="{% static 'bootstrap/css/jumbotron-narrow.css' %}" rel="stylesheet" type="text/css" >
 
+    <script type = "text/javascript">
+        function start() {
+            var current = new Date();
+            var year = current.getFullYear();
+            document.getElementById("copy_right").innerHTML = "<p>&copy TEST BEANS " + year.toString() + "</p>";
+        }
+        window.addEventListener("load", start, false);
+    </script>
+
 </head>
 
 <body>
@@ -81,7 +90,7 @@
       </div> <!-- row marketing -->
 
       <footer class="footer">
-        <p></p>
+        <div id="copy_right"></div>
       </footer>
 
     </div> <!-- /container -->
