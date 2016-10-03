@@ -17,70 +17,6 @@
     <!-- Custom styles for this template -->
     <link href="{% static 'bootstrap/css/jumbotron-narrow.css' %}" rel="stylesheet" type="text/css" >
 
-    <script type = "text/javascript">
-        function start() {
-            var current = new Date();
-            var year = current.getFullYear();
-            document.getElementById("copy_right").innerHTML = "<p>&copy TEST BEANS " + year.toString() + "</p>";
-        }
-        window.addEventListener("load", start, false);
-    </script>
-
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-      google.charts.load("current", {packages:["corechart"]});
-      google.charts.setOnLoadCallback(drawChartFeatures);
-      google.charts.setOnLoadCallback(drawChartScenarios);
-
-      // Features
-      function drawChartFeatures() {
-        var passed_value = {{ passed_percentage.0 }}
-        var failed_value = {{ failed_percentage.0 }}
-        var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Name');
-            data.addColumn('number', 'Percentage');
-            data.addRows([
-              ['Passed', passed_value],
-              ['Failed', failed_value]
-            ]);
-        var options = {
-          title: 'Features',
-          width:300,
-          height:300,
-          colors: ['#00CC00', '#FF0000'],
-          titleTextStyle: {fontSize: 16},
-          legend: 'none'
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechart_features'));
-        chart.draw(data, options);
-      }
-
-      function drawChartScenarios() {
-        var passed_value = {{ passed_percentage.1 }}
-        var failed_value = {{ failed_percentage.1 }}
-        var data = new google.visualization.DataTable();
-            data.addColumn('string', 'Name');
-            data.addColumn('number', 'Percentage');
-            data.addRows([
-              ['Passed', passed_value],
-              ['Failed', failed_value]
-            ]);
-        var options = {
-          title: 'Scenarios',
-          width:300,
-          height:300,
-          colors: ['#00CC00', '#FF0000'],
-          titleTextStyle: {fontSize: 16},
-          legend: 'none'
-        };
-
-        var chart = new google.visualization.PieChart(document.getElementById('piechart_scenarios'));
-        chart.draw(data, options);
-      }
-
-    </script>
-
 </head>
 
 <body>
@@ -137,6 +73,62 @@
       </footer>
 
     </div> <!-- /container -->
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChartFeatures);
+      google.charts.setOnLoadCallback(drawChartScenarios);
+
+      // Features
+      function drawChartFeatures() {
+        var passed_value = {{ passed_percentage.0 }}
+        var failed_value = {{ failed_percentage.0 }}
+        var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Name');
+            data.addColumn('number', 'Percentage');
+            data.addRows([
+              ['Passed', passed_value],
+              ['Failed', failed_value]
+            ]);
+        var options = {
+          title: 'Features',
+          width:300,
+          height:300,
+          colors: ['#00CC00', '#FF0000'],
+          titleTextStyle: {fontSize: 16},
+          legend: 'none'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart_features'));
+        chart.draw(data, options);
+      }
+
+      function drawChartScenarios() {
+        var passed_value = {{ passed_percentage.1 }}
+        var failed_value = {{ failed_percentage.1 }}
+        var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Name');
+            data.addColumn('number', 'Percentage');
+            data.addRows([
+              ['Passed', passed_value],
+              ['Failed', failed_value]
+            ]);
+        var options = {
+          title: 'Scenarios',
+          width:300,
+          height:300,
+          colors: ['#00CC00', '#FF0000'],
+          titleTextStyle: {fontSize: 16},
+          legend: 'none'
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart_scenarios'));
+        chart.draw(data, options);
+      }
+    </script>
+
+    <script type = "text/javascript" src="{% static 'bootstrap/js/testbeans.js' %}"></script>
 
 </body>
 </html>
