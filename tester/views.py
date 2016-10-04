@@ -5,7 +5,6 @@ from django.shortcuts import render, get_object_or_404
 from .models import Feature, Scenario, UserData
 
 
-# Create your views here.
 def index(request):
     command_line = "find -name *.feature"
     args = shlex.split(command_line)
@@ -13,8 +12,7 @@ def index(request):
     feature_list_str = out.splitlines()
 
     # update database for feature list
-    if Feature.objects.all():
-        Feature.objects.all().delete()
+    Feature.objects.all().delete()
     for line in feature_list_str:
         file_name = line.replace("./features/", "")
         feature = Feature(name=file_name, file_path=line)
@@ -34,12 +32,11 @@ def index(request):
                 break
 
     # update database for user data
-    if UserData.objects.all():
-        UserData.objects.all().delete()
+    UserData.objects.all().delete()
     for line in user_data:
         temp_list = line.split('=')
-        user_data = UserData(name=temp_list[0].strip(), value=temp_list[1].strip())
-        user_data.save()
+        user_data_entry = UserData(name=temp_list[0].strip(), value=temp_list[1].strip())
+        user_data_entry.save()
     user_data_list = UserData.objects.all()
 
     context = {'feature_list': feature_list, 'user_data_list': user_data_list}
@@ -56,7 +53,7 @@ def result(request):
         options += " -D " + user_data.name + "=" + request.POST[user_data.name]
 
     # update configuration file behave.ini
-    new_lines =[]
+    new_lines = []
     with open('behave.ini', 'r') as config_file:
         for line in config_file:
             new_lines.append(line)
@@ -77,13 +74,13 @@ def result(request):
 
         # Detail test results from outputs.text
         result_lines = []
-        with open('outputs.text') as f:
-            for line in f:
+        with open('outputs.text') as output_file:
+            for line in output_file:
                 result_lines.append(line)
 
         # Decode feature/scenario/steps passed/failed numbers
         (passed_percentage, failed_percentage) = decode_test_summary(result_summary)
-    except:
+    except Exception as error:
         result_summary = [out, err]
         result_lines = [out, err]
         passed_percentage = 0
@@ -98,13 +95,12 @@ def result(request):
 
 def detail(request, feature_id):
     feature = get_object_or_404(Feature, pk=feature_id)
-    if feature.scenario_set.all():
-        feature.scenario_set.all().delete()
+    feature.scenario_set.all().delete()
 
     # update scenarios to database for a selected feature
     previous_line = ''
-    with open(os.path.join(feature.file_path)) as file:
-        for line in file:
+    with open(os.path.join(feature.file_path)) as feature_file:
+        for line in feature_file:
             line = line.strip()
             if line.startswith('Scenario', 0, len(line)):
                 if previous_line:
@@ -128,12 +124,11 @@ def detail(request, feature_id):
                 break
 
     # update database for user data
-    if UserData.objects.all():
-        UserData.objects.all().delete()
+    UserData.objects.all().delete()
     for line in user_data:
         temp_list = line.split('=')
-        user_data = UserData(name=temp_list[0].strip(), value=temp_list[1].strip())
-        user_data.save()
+        user_data_entry = UserData(name=temp_list[0].strip(), value=temp_list[1].strip())
+        user_data_entry.save()
     user_data_list = UserData.objects.all()
 
     context = {'feature': feature, 'user_data_list': user_data_list}
@@ -150,7 +145,7 @@ def detailresult(request, feature_id):
         options += " -D " + user_data.name + "=" + request.POST[user_data.name]
 
     # update configuration file behave.ini
-    new_lines =[]
+    new_lines = []
     with open('behave.ini', 'r') as config_file:
         for line in config_file:
             new_lines.append(line)
@@ -172,13 +167,13 @@ def detailresult(request, feature_id):
 
         # Detail test results from outputs.text
         result_lines = []
-        with open('outputs.text') as f:
-            for line in f:
+        with open('outputs.text') as output_file:
+            for line in output_file:
                 result_lines.append(line)
 
         # Decode feature/scenario/steps passed/failed numbers
         (passed_percentage, failed_percentage) = decode_test_summary(result_summary)
-    except:
+    except Exception as error:
         result_summary = [out, err]
         result_lines = [out, err]
         passed_percentage = 0
@@ -212,8 +207,8 @@ def detailscenario(request, feature_id, scenario_id):
         UserData.objects.all().delete()
     for line in user_data:
         temp_list = line.split('=')
-        user_data = UserData(name=temp_list[0].strip(), value=temp_list[1].strip())
-        user_data.save()
+        user_data_entry = UserData(name=temp_list[0].strip(), value=temp_list[1].strip())
+        user_data_entry.save()
     user_data_list = UserData.objects.all()
 
     context = {'feature': feature, 'scenario': scenario, 'user_data_list': user_data_list}
@@ -230,7 +225,7 @@ def detailscenarioresult(request, scenario_id):
         options += " -D " + user_data.name + "=" + request.POST[user_data.name]
 
     # update configuration file behave.ini
-    new_lines =[]
+    new_lines = []
     with open('behave.ini', 'r') as config_file:
         for line in config_file:
             new_lines.append(line)
@@ -253,13 +248,13 @@ def detailscenarioresult(request, scenario_id):
 
         # Detail test results from outputs.text
         result_lines = []
-        with open('outputs.text') as f:
-            for line in f:
+        with open('outputs.text') as output_file:
+            for line in output_file:
                 result_lines.append(line)
 
         # Decode feature/scenario/steps passed/failed numbers
         (passed_percentage, failed_percentage) = decode_test_summary(result_summary)
-    except:
+    except Exception as error:
         result_summary = [out, err]
         result_lines = [out, err]
         passed_percentage = 0
