@@ -2,7 +2,7 @@ from behave import given, when, then
 from hamcrest import assert_that, is_not
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support import expected_conditions as EC
 from pyvirtualdisplay import Display
 
 
@@ -26,12 +26,17 @@ def step_impl(context, user):
 
 @when(u'entering to Gmail password element {password}')
 def step_impl(context, password):
+    try:
+        WebDriverWait(context.driver, 10).until(
+            EC.presence_of_element_located(context.driver.find_element_by_id(password)))
+    except Exception as error:
+        context.logger.error(error)
     driver_password = context.driver.find_element_by_id(password)
     driver_sing_in = context.driver.find_element_by_id("signIn")
     driver_password.send_keys(context.password)
     driver_sing_in.click()
     try:
-        WebDriverWait(context.driver, 10).until(ec.title_contains("Inbox"))
+        WebDriverWait(context.driver, 10).until(EC.title_contains("Inbox"))
         context.logger.info(context.driver.title)
     except Exception as error:
         context.logger.info(error)
