@@ -46,6 +46,8 @@ def index(request):
 def result(request):
     message_error = None
     last_four_lines = -4
+    out = ""
+    err = ""
 
     # read parameters
     user_data_list = UserData.objects.all()
@@ -140,6 +142,8 @@ def detail(request, feature_id):
 def detailresult(request, feature_id):
     message_error = None
     last_four_lines = -4
+    out = ""
+    err = ""
 
     # read parameters
     user_data_list = UserData.objects.all()
@@ -222,6 +226,8 @@ def detailscenario(request, feature_id, scenario_id):
 def detailscenarioresult(request, scenario_id):
     message_error = None
     last_four_lines = -4
+    out = ""
+    err = ""
 
     # read parameters
     user_data_list = UserData.objects.all()
