@@ -64,6 +64,11 @@
                 {% endfor %}
             {% endif %}
 
+            {% if message_error %}
+                <p>{{ message_error }}</p>
+            {% endif %}
+
+
         </div> <!--/col-lg-6  -->
 
       </div>

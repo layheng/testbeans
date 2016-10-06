@@ -44,6 +44,7 @@ def index(request):
 
 
 def result(request):
+    message_error = None
     last_four_lines = -4
 
     # read parameters
@@ -67,8 +68,7 @@ def result(request):
     # put together the command line string
     command_line = "behave -f plain -o outputs.text" + options
     try:
-        args = shlex.split(command_line)
-        (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
+        (out, err) = Popen(shlex.split(command_line), stdout=PIPE, stderr=PIPE).communicate()
         result_report_str = out.splitlines()
         result_summary = result_report_str[last_four_lines:]
 
@@ -85,11 +85,13 @@ def result(request):
         result_lines = [out, err]
         passed_percentage = 0
         failed_percentage = 0
+        message_error = error
 
     context = {'result_lines': result_lines,
                'result_summary': result_summary,
                'passed_percentage': passed_percentage,
-               'failed_percentage': failed_percentage}
+               'failed_percentage': failed_percentage,
+               'message_error': message_error}
     return render(request, 'tester/result.html', context)
 
 
@@ -136,6 +138,7 @@ def detail(request, feature_id):
 
 
 def detailresult(request, feature_id):
+    message_error = None
     last_four_lines = -4
 
     # read parameters
@@ -160,8 +163,7 @@ def detailresult(request, feature_id):
     feature = get_object_or_404(Feature, pk=feature_id)
     command_line = "behave -f plain -o outputs.text " + feature.file_path + options
     try:
-        args = shlex.split(command_line)
-        (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
+        (out, err) = Popen(shlex.split(command_line), stdout=PIPE, stderr=PIPE).communicate()
         result_report_str = out.splitlines()
         result_summary = result_report_str[last_four_lines:]
 
@@ -178,11 +180,13 @@ def detailresult(request, feature_id):
         result_lines = [out, err]
         passed_percentage = 0
         failed_percentage = 0
+        message_error = error
 
     context = {'result_lines': result_lines,
                'result_summary': result_summary,
                'passed_percentage': passed_percentage,
-               'failed_percentage': failed_percentage}
+               'failed_percentage': failed_percentage,
+               'message_error': message_error}
     return render(request, 'tester/result.html', context)
 
 
@@ -216,6 +220,7 @@ def detailscenario(request, feature_id, scenario_id):
 
 
 def detailscenarioresult(request, scenario_id):
+    message_error = None
     last_four_lines = -4
 
     # read parameters
@@ -241,8 +246,7 @@ def detailscenarioresult(request, scenario_id):
     scenario_name_list = scenario.name.split()
     command_line = "behave -f plain -o outputs.text -n " + scenario_name_list[1] + options
     try:
-        args = shlex.split(command_line)
-        (out, err) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
+        (out, err) = Popen(shlex.split(command_line), stdout=PIPE, stderr=PIPE).communicate()
         result_report_str = out.splitlines()
         result_summary = result_report_str[last_four_lines:]
 
@@ -263,7 +267,8 @@ def detailscenarioresult(request, scenario_id):
     context = {'result_lines': result_lines,
                'result_summary': result_summary,
                'passed_percentage': passed_percentage,
-               'failed_percentage': failed_percentage}
+               'failed_percentage': failed_percentage,
+               'message_error': message_error}
     return render(request, 'tester/result.html', context)
 
 
@@ -273,14 +278,19 @@ def decode_test_summary(summary):
     :param summary: list of test summary with features, scenarios and steps
     :return: passed/failed percentage and progress
     """
-    passed_percentage = []
-    failed_percentage = []
     pass_index = 0
     fail_index = 3
+    total_features = 0
+    total_scenario = 0
+    total_steps = 0
+    passed_percentage = []
+    failed_percentage = []
 
     # decode features
-    feature_list = summary[0].split()
-    total_features = int(feature_list[pass_index]) + int(feature_list[fail_index])
+    if len(summary) > 0:
+        feature_list = summary[0].split()
+        total_features = int(feature_list[pass_index]) + int(feature_list[fail_index])
+
     if total_features > 0:
         passed_value = float(feature_list[pass_index]) / total_features
     else:
@@ -290,8 +300,10 @@ def decode_test_summary(summary):
     failed_percentage.append(failed_value)
 
     # decode scenarios
-    scenario_list = summary[1].split()
-    total_scenario = int(scenario_list[pass_index]) + int(scenario_list[fail_index])
+    if len(summary) > 1:
+        scenario_list = summary[1].split()
+        total_scenario = int(scenario_list[pass_index]) + int(scenario_list[fail_index])
+
     if total_scenario > 0:
         passed_value = float(scenario_list[pass_index]) / total_scenario
     else:
@@ -301,8 +313,10 @@ def decode_test_summary(summary):
     failed_percentage.append(failed_value)
 
     # decode steps
-    step_list = summary[2].split()
-    total_steps = int(step_list[pass_index]) + int(step_list[fail_index])
+    if len(summary) > 2:
+        step_list = summary[2].split()
+        total_steps = int(step_list[pass_index]) + int(step_list[fail_index])
+
     if total_steps > 0:
         passed_value = float(step_list[pass_index]) / total_steps
     else:
