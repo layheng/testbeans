@@ -1,16 +1,22 @@
-# generic command class
-import shlex
 from subprocess import Popen, PIPE
 
 
 class Command(object):
-
-    def __init__(self, command=None):
-        self.command = command
+    """
+    command line execution utility
+    """
 
     @staticmethod
     def execute_command(command):
-
-        args = shlex.split(command)
-        (response, error) = Popen(args, stdout=PIPE, stderr=PIPE).communicate()
+        """
+        execute command line
+        :param command:
+        :return: response, error
+        """
+        (response, error) = Popen(command, shell=True, stdout=PIPE, stderr=PIPE).communicate()
         return response, error
+
+
+if __name__ == "__main__":
+    (output, error) = Command.execute_command("ls ../features/")
+    print(output)
