@@ -1,6 +1,4 @@
-# Screenshots
-
-# User Inputs
+# User interface
 ![Alt text](/images/Testbeans_UserInterface.jpg)
 
 # Test Reports
