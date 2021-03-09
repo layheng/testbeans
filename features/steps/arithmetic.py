@@ -2,7 +2,7 @@ from behave import given, when, then
 from hamcrest import assert_that, equal_to
 
 
-@given(u'two integers a and b')
+@given(u'two integers a to 1 and b to 2')
 def step_impl(context):
     context.a = 1
     context.b = 2
@@ -29,7 +29,7 @@ def step_impl(context):
     assert_that(1, equal_to(context.subtract))
 
 
-@ when(u'multiplying the numbers')
+@ when(u'multiplying the two numbers')
 def step_impl(context):
     context.multi = context.a * context.b
 

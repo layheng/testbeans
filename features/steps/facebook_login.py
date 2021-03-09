@@ -3,14 +3,11 @@ from hamcrest import assert_that, is_not
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
-from pyvirtualdisplay import Display
 import time
 
 
 @given(u'Website is accessible')
 def step_impl(context):
-    context.display = Display(visible=0, size=(1024, 768))
-    context.display.start()
     context.driver = webdriver.Firefox()
     url = "https://" + context.server_ip
     context.driver.get(url)
@@ -29,9 +26,9 @@ def step_impl(context, user, password):
 
 @then(u'login is success')
 def step_impl(context):
+    time.sleep(3)
     assert_that(context.driver.title, is_not(context.title_logout))
     context.driver.quit()
-    context.display.stop()
 
 
 @when(u'website login with user element {user} and password element {password}')
