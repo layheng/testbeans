@@ -26,8 +26,9 @@ def step_impl(context, user, password):
 
 @then(u'login is success')
 def step_impl(context):
-    time.sleep(3)
+    time.sleep(2)
     assert_that(context.driver.title, is_not(context.title_logout))
+    time.sleep(0.1)
     context.driver.quit()
 
 
