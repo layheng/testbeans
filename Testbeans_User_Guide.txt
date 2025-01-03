@@ -1,0 +1,22 @@
+Behave - Testbeans User Guide
+
+Requirements
+1. behave version 1.2.6
+2. PyHamcrest version 2.1.0
+3. selenium version 4.27.1
+
+
+Installation
+$ pip install behave
+$ pip install PyHamcrest
+$ pip install selenium
+
+
+Run Behave 
+
+$behave --tags="@arithmetic"
+
+
+References
+[1]. Behave documentation
+	https://behave.readthedocs.io/en/latest/
