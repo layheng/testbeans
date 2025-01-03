@@ -1,4 +1,4 @@
-Behave - Testbeans User Guide
+Testbeans User Guide
 
 Requirements
 1. behave version 1.2.6
@@ -13,7 +13,6 @@ $ pip install selenium
 
 
 Run Behave 
-
 $behave --tags="@arithmetic"
 
 
